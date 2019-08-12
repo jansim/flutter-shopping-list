@@ -10,5 +10,8 @@ A shopping list application, built using flutter.
 ![keyboard_closed](./screenshots/keyboard_closed.png)
 </p>
 
+## Bulding
+Build the apk for this project using `flutter build apk` (this will build the *fat* apk for all targets).
+
 ## Generating Icons
 Generate new icons by runnning `flutter pub run flutter_launcher_icons:main`
