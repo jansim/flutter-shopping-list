@@ -5,8 +5,7 @@
 A shopping list application, built using flutter.
 
 ## Screenshots 📱
-![keyboard_open](./screenshots/keyboard_open.png)
-![keyboard_closed](./screenshots/keyboard_closed.png)
+![keyboard_open](./screenshots/screenshots.png)
 
 ## Building 🛠️
 Build the apk for this project using `flutter build apk` (this will build the *fat* apk for all targets).
