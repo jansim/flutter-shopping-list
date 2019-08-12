@@ -68,14 +68,9 @@ class _TodoListState extends State<TodoList> {
   // Build the whole list of todo items
   Widget _buildTodoList() {
     return new ListView.builder(
+      itemCount: _items.length,
       itemBuilder: (context, index) {
-        // itemBuilder will be automatically be called as many times as it takes for the
-        // list to fill up its available space, which is most likely more than the
-        // number of todo items we have. So, we need to check the index is OK.
-        if (index < _items.length) {
-          return _buildListItem(index, _items[index]);
-        }
-        return null;
+        return _buildListItem(index, _items[index]);
       },
     );
   }
