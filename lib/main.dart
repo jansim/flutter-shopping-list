@@ -18,15 +18,15 @@ class MyApp extends StatelessWidget {
         // or simply save your changes to "hot reload" in a Flutter IDE).
         // Notice that the counter didn't reset back to zero; the application
         // is not restarted.
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.red,
       ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
+      home: TodoList(title: '0BS Shopping List'),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
+class TodoList extends StatefulWidget {
+  TodoList({Key key, this.title}) : super(key: key);
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -40,21 +40,36 @@ class MyHomePage extends StatefulWidget {
   final String title;
 
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  _TodoListState createState() => _TodoListState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+class _TodoListState extends State<TodoList> {
+  List<String> _items = [];
 
-  void _incrementCounter() {
+  void _addItem(String item) {
     setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
+      _items.add(item);
     });
+  }
+
+  // Build the whole list of todo items
+  Widget _buildTodoList() {
+    return new ListView.builder(
+      itemBuilder: (context, index) {
+        // itemBuilder will be automatically be called as many times as it takes for the
+        // list to fill up its available space, which is most likely more than the
+        // number of todo items we have. So, we need to check the index is OK.
+        if (index < _items.length) {
+          return _buildListItem(_items[index]);
+        }
+        return null;
+      },
+    );
+  }
+
+  // Build a single todo item
+  Widget _buildListItem(String todoText) {
+    return new ListTile(title: new Text(todoText));
   }
 
   @override
@@ -67,45 +82,35 @@ class _MyHomePageState extends State<MyHomePage> {
     // than having to individually change instances of widgets.
     return Scaffold(
       appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
+        // Here we take the value from the TodoList object that was created by
         // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
       ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.display1,
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      // body: _buildTodoList(),
+      body: Stack(
+        children: <Widget>[
+          _buildTodoList(),
+          Positioned(
+              bottom: 0.0,
+              width: MediaQuery.of(context).size.width, // width 100%
+              child: Container(
+                  decoration:
+                      BoxDecoration(color: Colors.white, boxShadow: <BoxShadow>[
+                    BoxShadow(
+                      color: const Color(0x80000000),
+                      offset: Offset(0.0, 6.0),
+                      blurRadius: 20.0,
+                    )
+                  ]),
+                  child: TextField(
+                    onSubmitted: _addItem,
+                    autofocus: true,
+                    decoration: InputDecoration(
+                      hintText: "New Item..",
+                      contentPadding: EdgeInsets.all(20)),
+                  ))),
+        ],
+      ) // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
