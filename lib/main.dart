@@ -45,6 +45,7 @@ class TodoList extends StatefulWidget {
 
 class _TodoListState extends State<TodoList> {
   List<String> _items = [];
+  List<String> _completedItems = [];
 
   TextEditingController inputController = new TextEditingController();
   void _addItem() {
@@ -59,18 +60,34 @@ class _TodoListState extends State<TodoList> {
     });
   }
 
-  void _removeItem(int index) {
+  void _completeItem(int index) {
     setState(() {
-      _items.removeAt(index);
+      _completedItems.insert(0, _items.removeAt(index));
+    });
+  }
+  void _uncompleteItem(int index) {
+    setState(() {
+      _items.add(_completedItems.removeAt(index));
+    });
+  }
+
+  void _clearCompleted() {
+    setState(() {
+      _completedItems.clear();
     });
   }
 
   // Build the whole list of todo items
   Widget _buildTodoList() {
     return new ListView.builder(
-      itemCount: _items.length,
+      itemCount: _items.length + _completedItems.length,
       itemBuilder: (context, index) {
-        return _buildListItem(index, _items[index]);
+        if (index < _items.length) {
+          return _buildListItem(index, _items[index]);
+        } else {
+          int completedIndex = index - _items.length;
+          return _buildCompletedListItem(completedIndex, _completedItems[completedIndex]);
+        }
       },
     );
   }
@@ -78,7 +95,14 @@ class _TodoListState extends State<TodoList> {
   // Build a single todo item
   Widget _buildListItem(int itemIndex, String todoText) {
     return new ListTile(
-        title: new Text(todoText), onTap: () => _removeItem(itemIndex));
+        title: new Text(todoText), onTap: () => _completeItem(itemIndex));
+  }
+  // Build a single completed todo item
+  Widget _buildCompletedListItem(int itemIndex, String todoText) {
+    return new ListTile(
+        title: new Text(todoText, style: TextStyle(color: Colors.grey, decoration: TextDecoration.lineThrough),),
+        onTap: () => _uncompleteItem(itemIndex),
+    );
   }
 
   @override
@@ -94,6 +118,13 @@ class _TodoListState extends State<TodoList> {
           // Here we take the value from the TodoList object that was created by
           // the App.build method, and use it to set our appbar title.
           title: Text(widget.title),
+          actions: <Widget>[
+            // action button
+            IconButton(
+              icon: Icon(Icons.clear_all),
+              onPressed: _clearCompleted,
+            )
+          ]
         ),
         body: Stack(
           children: <Widget>[
