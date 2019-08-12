@@ -51,6 +51,11 @@ class _TodoListState extends State<TodoList> {
       _items.add(item);
     });
   }
+  void _removeItem(int index) {
+    setState(() {
+      _items.removeAt(index);
+    });
+  }
 
   // Build the whole list of todo items
   Widget _buildTodoList() {
@@ -60,7 +65,7 @@ class _TodoListState extends State<TodoList> {
         // list to fill up its available space, which is most likely more than the
         // number of todo items we have. So, we need to check the index is OK.
         if (index < _items.length) {
-          return _buildListItem(_items[index]);
+          return _buildListItem(index, _items[index]);
         }
         return null;
       },
@@ -68,8 +73,8 @@ class _TodoListState extends State<TodoList> {
   }
 
   // Build a single todo item
-  Widget _buildListItem(String todoText) {
-    return new ListTile(title: new Text(todoText));
+  Widget _buildListItem(int itemIndex, String todoText) {
+    return new ListTile(title: new Text(todoText), onTap: () => _removeItem(itemIndex));
   }
 
   @override
