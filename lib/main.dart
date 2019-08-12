@@ -46,9 +46,16 @@ class TodoList extends StatefulWidget {
 class _TodoListState extends State<TodoList> {
   List<String> _items = [];
 
-  void _addItem(String item) {
+  TextEditingController inputController = new TextEditingController();
+  void _addItem() {
     setState(() {
-      _items.add(item);
+      String item = inputController.text;
+      if (item.length > 0) {
+        _items.add(inputController.text);
+
+        // Reset input
+        inputController.text = "";
+      }
     });
   }
 
@@ -111,14 +118,19 @@ class _TodoListState extends State<TodoList> {
                           )
                         ]),
                     child: TextField(
-                      onSubmitted: _addItem,
+                      controller: inputController,
+                      onSubmitted: (String s) => _addItem(),
                       autofocus: true,
                       decoration: InputDecoration(
                           hintText: "New Item..",
                           contentPadding: EdgeInsets.all(20)),
                     ))),
           ],
-        ) // This trailing comma makes auto-formatting nicer for build methods.
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: _addItem,
+          child: Icon(Icons.add),
+        ), // This trailing comma makes auto-formatting nicer for build methods.
         );
   }
 }
