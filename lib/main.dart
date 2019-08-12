@@ -95,7 +95,6 @@ class _TodoListState extends State<TodoList> {
           // the App.build method, and use it to set our appbar title.
           title: Text(widget.title),
         ),
-        // body: _buildTodoList(),
         body: Stack(
           children: <Widget>[
             Container(
