@@ -98,7 +98,10 @@ class _TodoListState extends State<TodoList> {
         // body: _buildTodoList(),
         body: Stack(
           children: <Widget>[
-            _buildTodoList(),
+            Container(
+              child: _buildTodoList(),
+              padding: EdgeInsets.only(bottom: 60),
+            ),
             Positioned(
                 bottom: 0.0,
                 width: MediaQuery.of(context).size.width, // width 100%
