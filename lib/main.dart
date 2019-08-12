@@ -51,6 +51,7 @@ class _TodoListState extends State<TodoList> {
       _items.add(item);
     });
   }
+
   void _removeItem(int index) {
     setState(() {
       _items.removeAt(index);
@@ -74,7 +75,8 @@ class _TodoListState extends State<TodoList> {
 
   // Build a single todo item
   Widget _buildListItem(int itemIndex, String todoText) {
-    return new ListTile(title: new Text(todoText), onTap: () => _removeItem(itemIndex));
+    return new ListTile(
+        title: new Text(todoText), onTap: () => _removeItem(itemIndex));
   }
 
   @override
@@ -86,36 +88,37 @@ class _TodoListState extends State<TodoList> {
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
     return Scaffold(
-      appBar: AppBar(
-        // Here we take the value from the TodoList object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
-      // body: _buildTodoList(),
-      body: Stack(
-        children: <Widget>[
-          _buildTodoList(),
-          Positioned(
-              bottom: 0.0,
-              width: MediaQuery.of(context).size.width, // width 100%
-              child: Container(
-                  decoration:
-                      BoxDecoration(color: Colors.white, boxShadow: <BoxShadow>[
-                    BoxShadow(
-                      color: const Color(0x80000000),
-                      offset: Offset(0.0, 6.0),
-                      blurRadius: 20.0,
-                    )
-                  ]),
-                  child: TextField(
-                    onSubmitted: _addItem,
-                    autofocus: true,
-                    decoration: InputDecoration(
-                      hintText: "New Item..",
-                      contentPadding: EdgeInsets.all(20)),
-                  ))),
-        ],
-      ) // This trailing comma makes auto-formatting nicer for build methods.
-    );
+        appBar: AppBar(
+          // Here we take the value from the TodoList object that was created by
+          // the App.build method, and use it to set our appbar title.
+          title: Text(widget.title),
+        ),
+        // body: _buildTodoList(),
+        body: Stack(
+          children: <Widget>[
+            _buildTodoList(),
+            Positioned(
+                bottom: 0.0,
+                width: MediaQuery.of(context).size.width, // width 100%
+                child: Container(
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        boxShadow: <BoxShadow>[
+                          BoxShadow(
+                            color: const Color(0x80000000),
+                            offset: Offset(0.0, 6.0),
+                            blurRadius: 20.0,
+                          )
+                        ]),
+                    child: TextField(
+                      onSubmitted: _addItem,
+                      autofocus: true,
+                      decoration: InputDecoration(
+                          hintText: "New Item..",
+                          contentPadding: EdgeInsets.all(20)),
+                    ))),
+          ],
+        ) // This trailing comma makes auto-formatting nicer for build methods.
+        );
   }
 }
