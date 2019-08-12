@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() => runApp(MyApp());
 
@@ -47,6 +48,26 @@ class _TodoListState extends State<TodoList> {
   List<String> _items = [];
   List<String> _completedItems = [];
 
+  @override
+  void initState() {
+    super.initState();
+    _loadData();
+  }
+
+  void _loadData () async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _items = prefs.getStringList("items") ?? [];
+      _completedItems = prefs.getStringList("completedItems") ?? [];
+    });
+  }
+
+  void _saveData() async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setStringList("items", _items);
+    prefs.setStringList("completedItems", _completedItems);
+  }
+
   TextEditingController inputController = new TextEditingController();
   void _addItem() {
     setState(() {
@@ -64,17 +85,20 @@ class _TodoListState extends State<TodoList> {
     setState(() {
       _completedItems.insert(0, _items.removeAt(index));
     });
+    _saveData();
   }
   void _uncompleteItem(int index) {
     setState(() {
       _items.add(_completedItems.removeAt(index));
     });
+    _saveData();
   }
 
   void _clearCompleted() {
     setState(() {
       _completedItems.clear();
     });
+    _saveData();
   }
 
   // Build the whole list of todo items
