@@ -1,19 +1,14 @@
-# shopping_list
+![ic_launcher](./android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png)
 
-A new Flutter project.
+# Shopping List
 
-## Getting Started
+A shopping list application, built using flutter.
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Screenshots
+<p float="left">
+![keyboard_open](./screenshots/keyboard_open.png)
+![keyboard_closed](./screenshots/keyboard_closed.png)
+</p>
 
 ## Generating Icons
 Generate new icons by runnning `flutter pub run flutter_launcher_icons:main`
