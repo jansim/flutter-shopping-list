@@ -171,6 +171,7 @@ class _TodoListState extends State<TodoList> {
                         ]),
                     child: TextField(
                       controller: inputController,
+                      textCapitalization: TextCapitalization.sentences,
                       onSubmitted: (String s) => _addItem(),
                       autofocus: true,
                       decoration: InputDecoration(
