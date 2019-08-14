@@ -8,7 +8,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Shopping List',
+      title: 'ToShop',
       theme: ThemeData(
         // This is the theme of your application.
         //
@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.red,
       ),
-      home: TodoList(title: 'Simple Shopping List'),
+      home: TodoList(title: 'Shopping List'),
     );
   }
 }
