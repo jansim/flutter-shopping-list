@@ -47,6 +47,9 @@ class TodoList extends StatefulWidget {
   _TodoListState createState() => _TodoListState();
 }
 
+// Possible Actions in PopUpMenu
+enum MenuActions { ClearSuggestions }
+
 class _TodoListState extends State<TodoList> {
   List<String> _items = [];
   List<String> _completedItems = [];
@@ -173,6 +176,23 @@ class _TodoListState extends State<TodoList> {
             IconButton(
               icon: Icon(Icons.clear_all),
               onPressed: _clearCompleted,
+            ),
+            PopupMenuButton<MenuActions>(
+              onSelected: (MenuActions action) {
+                switch (action) {
+                  case MenuActions.ClearSuggestions:
+                    _suggestions.clear();
+                    break;
+                }
+              },
+              itemBuilder: (BuildContext context) {
+                return [
+                  PopupMenuItem<MenuActions>(
+                    child: Text("Clear Autocomplete Suggestions"),
+                    value: MenuActions.ClearSuggestions,
+                  ),
+                ];
+              },
             )
           ]),
       body: Stack(
