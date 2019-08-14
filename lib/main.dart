@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:shopping_list/suggestions.dart';
@@ -75,17 +76,21 @@ class _TodoListState extends State<TodoList> {
 
   TextEditingController inputController = new TextEditingController();
   void _addItem() {
-    setState(() {
-      String item = inputController.text;
-      if (item.length > 0) {
+    String item = inputController.text;
+    if (item.length > 0) {
+      setState(() {
         _items.add(item);
         _suggestions.add(item);
 
         // Reset input
         inputController.text = "";
-      }
-    });
-    _saveData();
+      });
+      _saveData();
+    } else {
+      Fluttertoast.showToast(
+        msg: "Add some text to add a new item.",
+      );
+    }
   }
 
   void _completeItem(int index) {
@@ -103,10 +108,17 @@ class _TodoListState extends State<TodoList> {
   }
 
   void _clearCompleted() {
-    setState(() {
-      _completedItems.clear();
-    });
-    _saveData();
+    if (_completedItems.length > 0) {
+      setState(() {
+        _completedItems.clear();
+      });
+      _saveData();
+    } else {
+      Fluttertoast.showToast(
+        msg:
+            "This will only clear completed entries. Tap an entry to mark it as completed.",
+      );
+    }
   }
 
   // Build the whole list of todo items
