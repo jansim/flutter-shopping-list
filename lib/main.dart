@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
+import 'package:shopping_list/suggestions.dart';
 
 void main() => runApp(MyApp());
 
@@ -48,13 +50,16 @@ class _TodoListState extends State<TodoList> {
   List<String> _items = [];
   List<String> _completedItems = [];
 
+  Suggestions _suggestions = Suggestions();
+  FocusNode _keyboardFocusNode = FocusNode();
+
   @override
   void initState() {
     super.initState();
     _loadData();
   }
 
-  void _loadData () async {
+  void _loadData() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
       _items = prefs.getStringList("items") ?? [];
@@ -73,7 +78,8 @@ class _TodoListState extends State<TodoList> {
     setState(() {
       String item = inputController.text;
       if (item.length > 0) {
-        _items.add(inputController.text);
+        _items.add(item);
+        _suggestions.add(item);
 
         // Reset input
         inputController.text = "";
@@ -88,6 +94,7 @@ class _TodoListState extends State<TodoList> {
     });
     _saveData();
   }
+
   void _uncompleteItem(int index) {
     setState(() {
       _items.add(_completedItems.removeAt(index));
@@ -111,7 +118,8 @@ class _TodoListState extends State<TodoList> {
           return _buildListItem(index, _items[index]);
         } else {
           int completedIndex = index - _items.length;
-          return _buildCompletedListItem(completedIndex, _completedItems[completedIndex]);
+          return _buildCompletedListItem(
+              completedIndex, _completedItems[completedIndex]);
         }
       },
     );
@@ -122,11 +130,16 @@ class _TodoListState extends State<TodoList> {
     return new ListTile(
         title: new Text(todoText), onTap: () => _completeItem(itemIndex));
   }
+
   // Build a single completed todo item
   Widget _buildCompletedListItem(int itemIndex, String todoText) {
     return new ListTile(
-        title: new Text(todoText, style: TextStyle(color: Colors.grey, decoration: TextDecoration.lineThrough),),
-        onTap: () => _uncompleteItem(itemIndex),
+      title: new Text(
+        todoText,
+        style: TextStyle(
+            color: Colors.grey, decoration: TextDecoration.lineThrough),
+      ),
+      onTap: () => _uncompleteItem(itemIndex),
     );
   }
 
@@ -139,7 +152,7 @@ class _TodoListState extends State<TodoList> {
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
     return Scaffold(
-        appBar: AppBar(
+      appBar: AppBar(
           // Here we take the value from the TodoList object that was created by
           // the App.build method, and use it to set our appbar title.
           title: Text(widget.title),
@@ -149,42 +162,71 @@ class _TodoListState extends State<TodoList> {
               icon: Icon(Icons.clear_all),
               onPressed: _clearCompleted,
             )
-          ]
-        ),
-        body: Stack(
-          children: <Widget>[
-            Container(
-              child: _buildTodoList(),
-              padding: EdgeInsets.only(bottom: 60),
-            ),
-            Positioned(
-                bottom: 0.0,
-                width: MediaQuery.of(context).size.width, // width 100%
-                child: Container(
-                    decoration: BoxDecoration(
-                        color: Colors.white,
-                        boxShadow: <BoxShadow>[
-                          BoxShadow(
-                            color: const Color(0x80000000),
-                            offset: Offset(0.0, 6.0),
-                            blurRadius: 20.0,
-                          )
-                        ]),
-                    child: TextField(
+          ]),
+      body: Stack(
+        children: <Widget>[
+          Container(
+            child: _buildTodoList(),
+            padding: EdgeInsets.only(bottom: 60),
+          ),
+          Positioned(
+              bottom: 0.0,
+              width: MediaQuery.of(context).size.width, // width 100%
+              child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    boxShadow: <BoxShadow>[
+                      BoxShadow(
+                        color: const Color(0x80000000),
+                        offset: Offset(0.0, 6.0),
+                        blurRadius: 20.0,
+                      ),
+                    ],
+                  ),
+                  child: TypeAheadField(
+                    textFieldConfiguration: TextFieldConfiguration(
                       controller: inputController,
                       textCapitalization: TextCapitalization.sentences,
-                      onSubmitted: (String s) => _addItem(),
+                      onSubmitted: (dynamic x) => _addItem(),
                       autofocus: true,
+                      focusNode: _keyboardFocusNode,
                       decoration: InputDecoration(
-                          hintText: "New Item..",
-                          contentPadding: EdgeInsets.all(20)),
-                    ))),
-          ],
-        ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: _addItem,
-          child: Icon(Icons.add),
-        ), // This trailing comma makes auto-formatting nicer for build methods.
-        );
+                        hintText: "New Item..",
+                        contentPadding: EdgeInsets.all(20),
+                      ),
+                    ),
+                    direction: AxisDirection.up,
+                    hideOnEmpty: true,
+                    suggestionsCallback: (pattern) {
+                      if (pattern.length > 0) {
+                        return _suggestions.get(pattern);
+                      } else {
+                        return [];
+                      }
+                    },
+                    debounceDuration: Duration(milliseconds: 100),
+                    itemBuilder: (context, suggestion) {
+                      return ListTile(
+                        title: Text(suggestion),
+                      );
+                    },
+                    transitionBuilder:
+                        (context, suggestionsBox, animationController) =>
+                            suggestionsBox, // no animation
+                    onSuggestionSelected: (suggestion) {
+                      inputController.text = suggestion;
+                      _addItem();
+                      if (!_keyboardFocusNode.hasFocus) {
+                        FocusScope.of(context).requestFocus(_keyboardFocusNode);
+                      }
+                    },
+                  ))),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _addItem,
+        child: Icon(Icons.add),
+      ), // This trailing comma makes auto-formatting nicer for build methods.
+    );
   }
 }
