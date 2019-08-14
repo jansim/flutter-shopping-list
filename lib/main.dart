@@ -79,6 +79,7 @@ class _TodoListState extends State<TodoList> {
         inputController.text = "";
       }
     });
+    _saveData();
   }
 
   void _completeItem(int index) {
